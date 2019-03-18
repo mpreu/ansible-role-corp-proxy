@@ -1,0 +1,21 @@
+---
+- name: Set dnf proxy
+  become: yes
+  vars:
+    file: /etc/dnf/dnf.conf
+  block:
+    - lineinefile:
+        path: "{{ file }}"
+        create: yes
+        regexp: "^proxy="
+        line: "proxy={{ corp_proxy_url_http }}"
+    - lineinefile:
+        path: "{{ file }}"
+        regexp: "^proxy_username="
+        line: "proxy_username={{ corp_proxy_username }}"
+      when: "{{ corp_proxy_auth_required }}"
+    - lineinefile:
+        path: "{{ file }}"
+        regexp: "^proxy_password="
+        line: "proxy_password={{ corp_proxy_password }}"
+      when: "{{ corp_proxy_auth_required }}"

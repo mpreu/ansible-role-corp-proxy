@@ -1,0 +1,7 @@
+---
+# handlers file for ansible-role-corp-proxy
+- name: Restart docker service
+  systemd:
+    name: docker.service
+    state: restarted
+    daemon-reload: yes

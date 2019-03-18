@@ -1,0 +1,13 @@
+---
+- name: Check if docker is installed
+  assert:
+    that: "'docker.service' in ansible_facts.services"
+    fail_msg: "Docker seems not be installed. Make sure it is before running again!"
+
+- name: Configure docker daemon proxy settings
+  become: yes
+  template:
+    src: docker/http-proxy.conf.j2
+    dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+  notify:
+    - Restart docker service

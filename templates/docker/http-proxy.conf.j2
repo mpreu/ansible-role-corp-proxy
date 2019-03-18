@@ -1,0 +1,10 @@
+{{ ansible_managed }}
+[Service]
+{% if corp_proxy_auth_required %}
+Environment="HTTP_PROXY={{ corp_proxy_url_http_auth }}"
+Environment="HTTPS_PROXY={{ corp_proxy_url_https_auth }}"
+{% else %}
+Environment="HTTP_PROXY={{ corp_proxy_url_http }}"
+Environment="HTTPS_PROXY={{ corp_proxy_url_https }}"
+{% endif %}
+Environment="NO_PROXY={{ corp_proxy_url_noproxy }}"

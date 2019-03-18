@@ -1,0 +1,54 @@
+---
+# tasks file for ansible-role-corp-proxy
+- name: Check if behind proxy
+  uri: 
+    url: https://www.google.de
+  register: behind_proxy
+
+- debug:
+    msg: "Cannot reach google.de -> Assuming you are behind a proxy"
+    verbosity: 1
+  when:
+    - behind_proxy.status != 200
+  
+# Necessary to do e.g. file based operations
+- name: Install libselinux-python on systemd controlled systems
+  become: yes
+  package:
+    name: libselinux-python
+    state: present
+  when:
+    - ansible_service_mgr == 'systemd'
+  vars:
+    https_proxy_tmp: "{{ corp_proxy_url_http if behind_proxy.status != 200 else '' }}"
+  environment:
+    https_proxy: "{{ https_proxy_tmp }}"
+    HTTPS_PROXY: "{{ https_proxy_tmp }}"
+
+# Gather service facts
+- name: Populate service facts
+  service_facts:
+
+# Set facts
+- set_fact:
+    corp_proxy_auth_required: yes
+    corp_proxy_username: "{{ corp_proxy_username | urlencode }}"
+    corp_proxy_password: "{{ corp_proxy_password | urlencode }}"
+  when:
+    - corp_proxy_username is defined
+    - corp_proxy_password is defined
+
+- set_fact:
+    corp_proxy_url_http_auth: "{{ corp_proxy_username }}:{{ corp_proxy_password }}@{{ corp_proxy_url_http }}"
+    corp_proxy_url_https_auth: "{{ corp_proxy_username }}:{{ corp_proxy_password }}@{{ corp_proxy_url_https }}"
+  when:
+    - corp_proxy_auth_required
+
+# Handle package manager proxy settings
+- include_tasks: "{{ ansible_pkg_mgr }}.yml"
+
+# Handle docker
+- include_tasks: docker.yml
+
+# Handle bash (compatible) shells
+- include_tasks: profile.yml

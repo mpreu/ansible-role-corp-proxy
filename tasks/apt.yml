@@ -1,0 +1,30 @@
+---
+- name: Set apt proxy without authentification
+  become: yes
+  lineinefile:
+    path: /etc/apt/apt.conf.d/01proxy
+    create: yes
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - line: 'Acquire::http::proxy \"{{ corp_proxy_url_http }}\"'
+      regexp: '^Acquire::http::proxy'
+    - line: 'Acquire::https::proxy \"{{ corp_proxy_url_https }}\"'
+      regexp: '^Acquire::https::proxy'
+  when:
+    - not corp_proxy_auth_required
+
+- name: Set apt proxy with authentification
+  become: yes
+  lineinefile:
+    path: /etc/apt/apt.conf.d/01proxy
+    create: yes
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - line: 'Acquire::http::proxy \"{{ corp_proxy_url_http_auth }}\"'
+      regexp: '^Acquire::http::proxy'
+    - line: 'Acquire::https::proxy \"{{ corp_proxy_url_https_auth }}\"'
+      regexp: '^Acquire::https::proxy'
+  when:
+    - corp_proxy_auth_required

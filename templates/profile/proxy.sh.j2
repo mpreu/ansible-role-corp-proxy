@@ -1,0 +1,12 @@
+{{ ansible_managed }}
+{% if corp_proxy_auth_required %}
+export http_proxy={{ corp_proxy_url_http_auth }}
+export https_proxy={{ corp_proxy_url_https_auth }}
+{% else %}
+export http_proxy={{ corp_proxy_url_http }}
+export https_proxy={{ corp_proxy_url_https }}
+{% endif %}
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$https_proxy
+export no_proxy={{ corp_proxy_url_noproxy }}
+export NO_PROXY=$no_proxy
