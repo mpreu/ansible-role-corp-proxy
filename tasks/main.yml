@@ -46,9 +46,12 @@
 
 # Handle package manager proxy settings
 - include_tasks: "{{ ansible_pkg_mgr }}.yml"
+  when: pkg_mgr in corp_proxy_tools
 
 # Handle docker
 - include_tasks: docker.yml
+  when: docker in corp_proxy_tools
 
 # Handle bash (compatible) shells
 - include_tasks: profile.yml
+  when: bash in corp_proxy_tools

@@ -1,2 +1,6 @@
 ---
 # defaults file for ansible-role-corp-proxy
+coorp_proxy_tools:
+  - pkg_mgr
+  - bash
+  - docker

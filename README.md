@@ -17,6 +17,7 @@ coorp_proxy_url_noproxy:
 coorp_proxy_username:
 coorp_proxy_password:
 coorp_proxy_tools: [default]
+  - pkg_mgr
   - bash
   - docker
 ```
